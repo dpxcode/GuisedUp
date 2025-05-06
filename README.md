@@ -348,62 +348,31 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
 ### 4. Service Degradation Guard Rails
 
 #### Circuit Breaker Pattern
-```typescript
-// utils/circuit-breaker.ts
-export class CircuitBreaker {
-  private failures: number = 0;
-  private readonly threshold: number;
-  private readonly timeout: number;
+The system implements the Circuit Breaker pattern to prevent cascading failures and provide graceful degradation. Key features include:
 
-  constructor(threshold: number = 5, timeout: number = 60000) {
-    this.threshold = threshold;
-    this.timeout = timeout;
-  }
+1. **Failure Threshold**
+   - Configurable failure count limit
+   - Automatic circuit opening
+   - Timeout-based reset
+   - State monitoring
 
-  async execute<T>(fn: () => Promise<T>): Promise<T> {
-    if (this.failures >= this.threshold) {
-      throw new Error('Circuit breaker is open');
-    }
+2. **Fallback Mechanisms**
+   - Alternative service providers
+   - Cached responses
+   - Graceful degradation
+   - Service recovery
 
-    try {
-      const result = await fn();
-      this.reset();
-      return result;
-    } catch (error) {
-      this.failures++;
-      throw error;
-    }
-  }
-}
-```
+3. **Monitoring**
+   - Circuit state tracking
+   - Failure rate monitoring
+   - Recovery metrics
+   - Performance impact analysis
 
-#### Fallback Mechanisms
-```typescript
-// services/product.ts
-export class ProductService {
-  private circuitBreaker: CircuitBreaker;
-  private cache: CacheService;
-
-  async getProduct(id: string) {
-    try {
-      return await this.circuitBreaker.execute(async () => {
-        const product = await this.dynamoDB.getItem({
-          TableName: 'Products',
-          Key: { id }
-        });
-        
-        if (!product) {
-          return this.cache.get(`product:${id}`);
-        }
-        
-        return product;
-      });
-    } catch (error) {
-      return this.getFallbackProduct(id);
-    }
-  }
-}
-```
+4. **Implementation Strategy**
+   - Service-level circuit breakers
+   - Dependency isolation
+   - Automatic recovery
+   - Health check integration
 
 ### 5. Performance Monitoring and SLA Metrics
 
