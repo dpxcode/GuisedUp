@@ -1,44 +1,40 @@
 # GuisedUp Shopping
 
-A full-stack e-commerce application built with React, Node.js, and AWS services.
+A full-stack e-commerce application with shopping cart and wallet functionality.
 
 ## Features
 
-- User authentication and authorization
-- Product catalog with search and filtering
-- Shopping cart functionality
-- Order management
-- Payment processing
-- Inventory management
-- Real-time notifications
+### Core Functionality
+- Product listing and details
+- Shopping cart management
+- Wallet system with balance tracking
+- Order history
+- Responsive design
+
+### Advanced Features
+- Real-time inventory updates
+- Order tracking
+- In-memory data storage for easy testing
 
 ## Architecture
 
-The application follows a microservices architecture with the following components:
+The application follows a simple but effective architecture:
 
 1. **Frontend**
    - React-based single-page application
    - Responsive design
-   - State management with Redux
-   - Real-time updates with WebSocket
+   - State management for cart and wallet
+   - Real-time updates for inventory
 
 2. **Backend**
    - Node.js REST API
    - Express framework
-   - MongoDB database
-   - Redis caching
-   - JWT authentication
-
-3. **AWS Integration**
-   - S3 for static assets
-   - CloudFront for CDN
-   - Route 53 for DNS
-   - CloudWatch for monitoring
-   - Lambda for serverless functions
+   - In-memory storage for products, cart, and wallet
+   - RESTful endpoints for all operations
 
 ## Saga Pattern Implementation
 
-The system implements a distributed transaction management pattern using the Saga pattern with choreography. This approach ensures reliable processing of business transactions across multiple microservices while maintaining data consistency.
+The system implements a distributed transaction management pattern using the Saga pattern with choreography. This approach ensures reliable processing of business transactions across multiple services while maintaining data consistency.
 
 ### Key Components
 
@@ -96,21 +92,41 @@ The system implements a circuit breaker pattern to prevent cascading failures an
    - Automatic recovery
    - Manual override
 
-## Getting Started
-
-1. Clone the repository
-2. Install dependencies
-3. Configure environment variables
-4. Start the development servers
-5. Access the application
-
 ## API Endpoints
 
-- Authentication: `/auth/*`
-- Products: `/products/*`
-- Cart: `/cart/*`
-- Orders: `/orders/*`
-- Users: `/users/*`
+### Products
+- `GET /products` - Get all products
+- `GET /products/:id` - Get product details
+
+### Cart
+- `GET /cart` - Get cart contents
+- `POST /cart/add` - Add item to cart
+- `POST /cart/remove` - Remove item from cart
+- `POST /cart/update` - Update item quantity
+- `GET /cart/validate` - Validate cart for checkout
+
+### Wallet
+- `GET /wallet` - Get wallet balance and transactions
+- `POST /wallet/add` - Add funds to wallet
+
+### Orders
+- `GET /orders` - Get order history
+- `GET /orders/:id` - Get order details
+- `POST /checkout` - Process checkout
+- `PUT /orders/:id` - Update order status
+
+## Getting Started
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/dpxcode/GuisedUp.git
+   cd GuisedUp
+   ```
+
+2. Install dependencies for both frontend and backend
+3. Start the backend server (runs on port 8000)
+4. Start the frontend development server (runs on port 3001)
+5. Access the application at http://localhost:3001
 
 ## Contributing
 
