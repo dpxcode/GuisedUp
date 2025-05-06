@@ -769,8 +769,8 @@ export class OTPAlertingSystem {
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/gusip.git
-cd gusip
+git clone https://github.com/dpxcode/GuisedUp.git
+cd GuisedUp
 ```
 
 2. Install backend dependencies:
