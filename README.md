@@ -760,6 +760,233 @@ export class OTPAlertingSystem {
    - Cross-team training
    - Post-mortem reviews
 
+## Saga Pattern Implementation with Choreography and Kafka
+
+### Architecture Overview
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                            Event-Driven Architecture                     │
+│                                                                         │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌──────────┐ │
+│  │  Order      │    │  Payment    │    │  Inventory  │    │  Kafka   │ │
+│  │  Service    │    │  Service    │    │  Service    │    │  Broker  │ │
+│  └──────┬──────┘    └──────┬──────┘    └──────┬──────┘    └────┬─────┘ │
+│         │                  │                   │                 │       │
+└─────────┼──────────────────┼───────────────────┼─────────────────┼───────┘
+          │                  │                   │                 │
+┌─────────┼──────────────────┼───────────────────┼─────────────────┼───────┐
+│         │                  │                   │                 │       │
+│  ┌──────┴──────┐    ┌─────┴──────┐    ┌──────┴──────┐    ┌─────┴─────┐ │
+│  │  Order      │    │  Payment   │    │  Inventory  │    │  Event    │ │
+│  │  Created    │    │  Processed │    │  Updated    │    │  Store    │ │
+│  └─────────────┘    └────────────┘    └─────────────┘    └───────────┘ │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### Implementation Details
+
+#### 1. Kafka Configuration
+```typescript
+// config/kafka.config.ts
+import { Kafka } from 'kafkajs';
+
+export const kafka = new Kafka({
+  clientId: 'guisedup-shopping',
+  brokers: [process.env.KAFKA_BROKER || 'localhost:9092'],
+  ssl: true,
+  sasl: {
+    mechanism: 'plain',
+    username: process.env.KAFKA_USERNAME!,
+    password: process.env.KAFKA_PASSWORD!
+  }
+});
+
+export const topics = {
+  ORDER_CREATED: 'order-created',
+  PAYMENT_PROCESSED: 'payment-processed',
+  INVENTORY_UPDATED: 'inventory-updated',
+  ORDER_COMPLETED: 'order-completed',
+  ORDER_FAILED: 'order-failed'
+};
+```
+
+#### 2. Saga Event Handlers
+```typescript
+// services/saga/order-saga.ts
+export class OrderSaga {
+  private producer: Producer;
+  private consumer: Consumer;
+
+  constructor() {
+    this.producer = kafka.producer();
+    this.consumer = kafka.consumer({ groupId: 'order-saga-group' });
+  }
+
+  async start() {
+    await this.consumer.connect();
+    await this.consumer.subscribe({ topics: Object.values(topics) });
+    
+    await this.consumer.run({
+      eachMessage: async ({ topic, message }) => {
+        const event = JSON.parse(message.value!.toString());
+        await this.handleEvent(topic, event);
+      }
+    });
+  }
+
+  private async handleEvent(topic: string, event: any) {
+    switch (topic) {
+      case topics.ORDER_CREATED:
+        await this.handleOrderCreated(event);
+        break;
+      case topics.PAYMENT_PROCESSED:
+        await this.handlePaymentProcessed(event);
+        break;
+      case topics.INVENTORY_UPDATED:
+        await this.handleInventoryUpdated(event);
+        break;
+    }
+  }
+}
+```
+
+#### 3. Compensation Logic
+```typescript
+// services/saga/compensation.ts
+export class CompensationHandler {
+  async handleCompensation(event: OrderEvent) {
+    switch (event.type) {
+      case 'ORDER_CREATED':
+        await this.compensateOrderCreation(event);
+        break;
+      case 'PAYMENT_PROCESSED':
+        await this.compensatePayment(event);
+        break;
+      case 'INVENTORY_UPDATED':
+        await this.compensateInventory(event);
+        break;
+    }
+  }
+
+  private async compensateOrderCreation(event: OrderEvent) {
+    // Rollback order creation
+    await this.orderService.cancelOrder(event.orderId);
+    await this.producer.send({
+      topic: topics.ORDER_FAILED,
+      messages: [{ value: JSON.stringify(event) }]
+    });
+  }
+}
+```
+
+#### 4. Event Store Implementation
+```typescript
+// services/event-store.ts
+export class EventStore {
+  private dynamoDB: DynamoDB.DocumentClient;
+
+  async appendEvent(event: DomainEvent) {
+    await this.dynamoDB.put({
+      TableName: 'EventStore',
+      Item: {
+        eventId: event.id,
+        aggregateId: event.aggregateId,
+        type: event.type,
+        data: event.data,
+        timestamp: event.timestamp,
+        version: event.version
+      }
+    }).promise();
+  }
+
+  async getEvents(aggregateId: string) {
+    const result = await this.dynamoDB.query({
+      TableName: 'EventStore',
+      KeyConditionExpression: 'aggregateId = :id',
+      ExpressionAttributeValues: {
+        ':id': aggregateId
+      }
+    }).promise();
+
+    return result.Items as DomainEvent[];
+  }
+}
+```
+
+### Benefits of This Implementation
+
+1. **Reliability**
+   - Event-driven architecture ensures loose coupling
+   - Kafka's durability guarantees message delivery
+   - Compensation logic handles failures gracefully
+
+2. **Scalability**
+   - Services can scale independently
+   - Kafka's partitioning enables parallel processing
+   - Event sourcing provides audit trail
+
+3. **Maintainability**
+   - Clear separation of concerns
+   - Easy to add new services
+   - Simplified debugging through event logs
+
+4. **Resilience**
+   - Automatic retry mechanisms
+   - Dead letter queues for failed messages
+   - Circuit breakers for service protection
+
+### Monitoring and Observability
+
+```typescript
+// utils/monitoring.ts
+export class SagaMonitor {
+  async trackSagaProgress(sagaId: string) {
+    const metrics = await this.cloudWatch.getMetricData({
+      MetricDataQueries: [
+        {
+          Id: 'sagaDuration',
+          MetricStat: {
+            Metric: {
+              Namespace: 'Saga',
+              MetricName: 'Duration',
+              Dimensions: [{ Name: 'SagaId', Value: sagaId }]
+            },
+            Period: 300,
+            Stat: 'Average'
+          }
+        }
+      ]
+    }).promise();
+
+    return this.analyzeSagaMetrics(metrics);
+  }
+}
+```
+
+### Best Practices
+
+1. **Event Design**
+   - Use immutable events
+   - Include correlation IDs
+   - Version events for compatibility
+
+2. **Error Handling**
+   - Implement retry policies
+   - Use dead letter queues
+   - Log compensation actions
+
+3. **Performance**
+   - Batch process events
+   - Use efficient serialization
+   - Monitor message backlog
+
+4. **Security**
+   - Encrypt sensitive data
+   - Implement access control
+   - Audit event changes
+
 ## Prerequisites
 
 - Node.js (v14 or higher)
