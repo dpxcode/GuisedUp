@@ -1,0 +1,500 @@
+.App {
+  text-align: center;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  padding: 20px;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.wallet {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.cart {
+  background-color: #1a1d24;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+  width: 80%;
+  max-width: 600px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.empty-cart {
+  color: #666;
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+}
+
+.cart-item {
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  border-bottom: 1px solid #444;
+  gap: 10px;
+}
+
+.cart-item-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cart-item-name {
+  font-weight: 500;
+  color: #fff;
+}
+
+.cart-item-price {
+  color: #4CAF50;
+  font-weight: 600;
+}
+
+.cart-item-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quantity-btn {
+  background-color: #333;
+  color: white;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: background-color 0.2s;
+}
+
+.quantity-btn:hover {
+  background-color: #444;
+}
+
+.quantity {
+  min-width: 30px;
+  text-align: center;
+  color: #fff;
+}
+
+.remove-btn {
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.remove-btn:hover {
+  background-color: #ff6666;
+}
+
+.cart-total {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #ddd;
+}
+
+.cart-total h3 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.cart-total .error {
+  color: #f44336;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #ffebee;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cart-total .retry-btn {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+.cart-total .retry-btn:hover {
+  background-color: #d32f2f;
+}
+
+.checkout-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+}
+
+.checkout-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.checkout-btn:not(:disabled):hover {
+  background-color: #45a049;
+}
+
+.products {
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px 0;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.product-card {
+  background-color: #1a1d24;
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.product-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.product-card h3 {
+  margin: 10px 0;
+  color: #fff;
+  font-size: 18px;
+  text-align: center;
+}
+
+.product-card p {
+  margin: 5px 0;
+  color: #ccc;
+  font-size: 14px;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.product-price {
+  color: #4CAF50 !important;
+  font-size: 20px !important;
+  font-weight: 600;
+  margin: 10px 0 !important;
+}
+
+.add-to-cart-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.2s;
+  width: 100%;
+}
+
+.add-to-cart-btn:hover {
+  background-color: #45a049;
+}
+
+.order-success {
+  background-color: #4CAF50;
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+  width: 80%;
+  max-width: 600px;
+}
+
+.order-success button {
+  background-color: white;
+  color: #4CAF50;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.orders {
+  width: 80%;
+  max-width: 800px;
+  margin: 20px 0;
+}
+
+.order-card {
+  background-color: #1a1d24;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 10px 0;
+  text-align: left;
+}
+
+.order-card h3 {
+  margin: 0 0 10px 0;
+  color: #4CAF50;
+}
+
+.order-card p {
+  margin: 5px 0;
+  font-size: 16px;
+}
+
+.wallet-section {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px 0;
+}
+
+.wallet-toggle {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  transition: background-color 0.2s;
+}
+
+.wallet-toggle:hover {
+  background-color: #45a049;
+}
+
+.wallet {
+  background-color: #1a1d24;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.wallet-balance {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.wallet-balance h3 {
+  color: #4CAF50;
+  font-size: 24px;
+}
+
+.wallet-actions {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.wallet-action {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.wallet-action input {
+  padding: 12px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background-color: #333;
+  color: white;
+  font-size: 16px;
+  width: 100%;
+}
+
+.wallet-action button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.2s;
+  width: 100%;
+}
+
+.wallet-action button:hover {
+  background-color: #45a049;
+}
+
+.transactions {
+  margin-top: 20px;
+}
+
+.transactions h3 {
+  color: #4CAF50;
+  margin-bottom: 10px;
+}
+
+.transaction {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #444;
+}
+
+.transaction.credit .transaction-amount {
+  color: #4CAF50;
+}
+
+.transaction.debit .transaction-amount {
+  color: #ff4444;
+}
+
+.transaction-date {
+  color: #666;
+  font-size: 14px;
+}
+
+.transaction-description {
+  flex: 1;
+  margin: 0 20px;
+}
+
+.transaction-amount {
+  font-weight: 600;
+}
+
+.loading {
+  color: #fff;
+  font-size: 18px;
+  text-align: center;
+  padding: 40px;
+}
+
+.error {
+  color: #ff4444;
+  font-size: 18px;
+  text-align: center;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.retry-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s;
+}
+
+.retry-btn:hover {
+  background-color: #45a049;
+}
